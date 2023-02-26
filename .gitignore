@@ -2,3 +2,4 @@ venv
 blogs.db
 __pycache__
 instance
+.env
