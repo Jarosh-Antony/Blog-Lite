@@ -3,3 +3,4 @@ blogs.db
 __pycache__
 instance
 .env
+blogs.db-journal
