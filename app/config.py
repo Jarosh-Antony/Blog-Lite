@@ -1,4 +1,3 @@
-import secrets
 import os
 from __main__ import app
 from dotenv import load_dotenv
@@ -17,8 +16,8 @@ app.config['SECURITY_REGISTERABLE']=True
 app.config['SECURITY_SEND_REGISTER_EMAIL']=False
 
 #app.config['SECURITY_LOGIN_URL']='/login?
-app.config['SECURITY_POST_REGISTER_VIEW']='/'
-app.config['SECURITY_POST_LOGOUT_VIEW']='/home'
+#app.config['SECURITY_POST_REGISTER_VIEW']='/'
+#app.config['SECURITY_POST_LOGOUT_VIEW']='/home'
 
 #app.config['SESSION_COOKIE_NAME'] = None
 app.config['SESSION_COOKIE_SECURE'] = True
