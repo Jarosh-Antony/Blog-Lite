@@ -24,3 +24,5 @@ app.config['SESSION_COOKIE_SECURE'] = True
 
 app.config['SQLALCHEMY_DATABASE_URI']=os.getenv('DB')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
+
+app.config['UPLOAD_FOLDER']="../post_images"

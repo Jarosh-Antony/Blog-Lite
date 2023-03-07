@@ -20,7 +20,7 @@ db.init_app(app)
 app.app_context().push()
 
 
-from models import User,Role,Post
+from models import User,Role
 from api import api
 
 api.init_app(app)

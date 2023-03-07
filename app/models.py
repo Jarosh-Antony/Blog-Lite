@@ -11,7 +11,7 @@ class User(db.Model,UserMixin):
     password = db.Column(db.String, nullable=False)
     active = db.Column(db.Boolean, nullable=False, default=True)
     fs_uniquifier = db.Column(db.String(64), nullable=False, unique=True)
-    post = db.relationship('Post', cascade="all,delete", backref="User")
+    post = db.relationship('Posts', cascade="all,delete", backref="User")
     roles = db.relationship('Role', secondary='roles_users',backref=db.backref('users', lazy='dynamic'))
     
     
@@ -34,7 +34,7 @@ class RolesUsers(db.Model):
     
 
 
-class Post(db.Model):
+class Posts(db.Model):
     __tablename__="post"
     
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
