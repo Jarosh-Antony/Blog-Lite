@@ -31,7 +31,7 @@ user_datastore = SQLAlchemyUserDatastore(db,User,Role)
 class ExtendedRegisterForm(RegisterForm):
     name = StringField('Name', [DataRequired()])
 
-app.security = Security(app, user_datastore,confirm_register_form=ExtendedRegisterForm)
+app.security = Security(app, user_datastore,register_form=ExtendedRegisterForm,confirm_register_form=ExtendedRegisterForm)
 
 
 if __name__ =='__main__':

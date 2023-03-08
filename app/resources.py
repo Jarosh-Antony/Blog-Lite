@@ -4,7 +4,7 @@ from flask import request, redirect, url_for
 from datetime import datetime
 import os
 from __main__ import app,db
-from models import Posts
+from models import User,Posts,Followings
 
 class Post(Resource):
     @auth_token_required
@@ -21,9 +21,8 @@ class Post(Resource):
         if 'image' in request.files:
             image = request.files['image']
             image_name=str(user_id)+'_'+time.strftime('%Y-%m-%d-%H-%M-%S-%f')+'_'+str(image.filename)
-            image.save(os.path.join(app.config['UPLOAD_FOLDER'],image_name))
-            imageurl = os.path.abspath(os.path.join(app.config['UPLOAD_FOLDER'], image_name))
-            print(imageurl)
+            imageurl=os.path.join(app.config['UPLOAD_FOLDER'],image_name)
+            image.save(imageurl)
         else :
             imageurl=None
             
@@ -31,5 +30,37 @@ class Post(Resource):
         db.session.add(newPost)
         db.session.commit()    
         
-        return 201
+        return 200
+    
+    @auth_token_required
+    def get(self):
+        user_id=current_user.id
+        following=Followings.query.filter_by(follower_id=user_id).all()
+        following_id=[f.id for f in following]
+        posts=[]
+        for f_id in following_id:
+            post=Posts.query.filter_by(userID=f_id).all()
+            for p in post:
+                posts.append(p)
+        print(posts)
+        return 200
+        
+        
 
+class Follow(Resource):
+    @auth_token_required
+    def post(self):
+        follower_id=current_user.id
+        
+        try:
+            following_id=User.query.filter_by(username=request.json['to_follow']).first().id
+        except:
+            return 400
+        if follower_id==following_id:
+            return 400
+            
+        newFollow=Followings(follower_id=follower_id,following_id=following_id)
+        db.session.add(newFollow)
+        db.session.commit()
+        
+        return 200

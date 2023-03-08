@@ -7,6 +7,7 @@ class User(db.Model,UserMixin):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String, nullable=False, unique=True)
+    username = db.Column(db.String,nullable=False,unique=True)
     name = db.Column(db.String, nullable=False)
     password = db.Column(db.String, nullable=False)
     active = db.Column(db.Boolean, nullable=False, default=True)
@@ -43,3 +44,15 @@ class Posts(db.Model):
     imageurl = db.Column(db.String)
     timestamp = db.Column(db.String,nullable=False)
     userID = db.Column(db.Integer,db.ForeignKey("user.id"),nullable=False)
+    
+    
+class Followings(db.Model):
+    __tablename__="follow"
+    
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    follower_id=db.Column('follower_id', db.Integer,db.ForeignKey('user.id'),nullable=False)
+    following_id=db.Column('following_id', db.Integer,db.ForeignKey('user.id'),nullable=False)
+    
+    
+    
+    

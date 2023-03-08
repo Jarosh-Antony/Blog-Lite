@@ -14,7 +14,8 @@ app.config['SECURITY_API_ENABLED_METHODS']=['token']
 app.config['SECURITY_BACKWARDS_COMPAT_AUTH_TOKEN']=True
 app.config['SECURITY_REGISTERABLE']=True
 app.config['SECURITY_SEND_REGISTER_EMAIL']=False
-
+app.config['SECURITY_USERNAME_ENABLE']=True
+app.config['SECURITY_USERNAME_REQUIRED']=True
 #app.config['SECURITY_LOGIN_URL']='/login?
 #app.config['SECURITY_POST_REGISTER_VIEW']='/'
 #app.config['SECURITY_POST_LOGOUT_VIEW']='/home'
@@ -25,4 +26,4 @@ app.config['SESSION_COOKIE_SECURE'] = True
 app.config['SQLALCHEMY_DATABASE_URI']=os.getenv('DB')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
 
-app.config['UPLOAD_FOLDER']="../post_images"
+app.config['UPLOAD_FOLDER']=os.getenv('UPLOAD_FOLDER')
