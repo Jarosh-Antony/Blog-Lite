@@ -1,10 +1,23 @@
-from flask_restful import Resource
+from flask_restful import Resource,fields,marshal
 from flask_security import current_user, auth_token_required
 from flask import request, redirect, url_for
 from datetime import datetime
 import os
 from __main__ import app,db
 from models import User,Posts,Followings
+
+
+
+post_rf={
+    'id':fields.Integer,
+    'title':fields.String,
+    'description':fields.String,
+    'timestamp':fields.String,
+    'imageurl':fields.String
+}
+posts_rf={
+    'posts':fields.List(fields.Nested(post_rf))
+}
 
 class Post(Resource):
     @auth_token_required
@@ -42,8 +55,9 @@ class Post(Resource):
             post=Posts.query.filter_by(userID=f_id).all()
             for p in post:
                 posts.append(p)
-        print(posts)
-        return 200
+        
+       
+        return marshal({'posts':posts},posts_rf),200
         
         
 
