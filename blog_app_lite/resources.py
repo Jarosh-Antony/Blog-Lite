@@ -79,6 +79,7 @@ class Feed(Resource):
         user_id=current_user.id
         following=Followings.query.filter_by(follower_id=user_id).all()
         following_id=[f.id for f in following]
+        
         posts=[]
         for f_id in following_id:
             post=Posts.query.filter_by(userID=f_id).all()
@@ -89,3 +90,20 @@ class Feed(Resource):
         return marshal({'posts':posts},posts_rf),200
 
 
+class Search(Resource):
+    @auth_token_required
+    def get(self):
+        search=request.json['search'].split(' ')
+        
+        search_results=[]
+        
+        for s in search:
+            s_r=User.query.filter_by(username=s).all()
+            for sr in s_r:
+                name_username={
+                                'name':sr.name,
+                                'username':sr.username}
+                if name_username not in search_results:
+                    search_results.append(name_username)
+        
+        return {'search_results':search_results},200
