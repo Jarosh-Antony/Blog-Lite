@@ -48,15 +48,8 @@ class Post(Resource):
     @auth_token_required
     def get(self):
         user_id=current_user.id
-        following=Followings.query.filter_by(follower_id=user_id).all()
-        following_id=[f.id for f in following]
-        posts=[]
-        for f_id in following_id:
-            post=Posts.query.filter_by(userID=f_id).all()
-            for p in post:
-                posts.append(p)
+        posts=Posts.query.filter_by(userID=user_id).all()
         
-       
         return marshal({'posts':posts},posts_rf),200
         
         
@@ -78,3 +71,21 @@ class Follow(Resource):
         db.session.commit()
         
         return 200
+        
+        
+class Feed(Resource):
+    @auth_token_required
+    def get(self):
+        user_id=current_user.id
+        following=Followings.query.filter_by(follower_id=user_id).all()
+        following_id=[f.id for f in following]
+        posts=[]
+        for f_id in following_id:
+            post=Posts.query.filter_by(userID=f_id).all()
+            for p in post:
+                posts.append(p)
+        
+       
+        return marshal({'posts':posts},posts_rf),200
+
+
