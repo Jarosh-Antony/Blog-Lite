@@ -6,6 +6,7 @@ import os
 from flask import current_app
 from blog_app_lite import db
 from blog_app_lite.models import User,Posts,Followings
+from sqlalchemy import or_
 
 
 post_rf={
@@ -86,7 +87,7 @@ class Feed(Resource):
             for p in post:
                 posts.append(p)
         
-       
+
         return marshal({'posts':posts},posts_rf),200
 
 
@@ -97,13 +98,15 @@ class Search(Resource):
         
         search_results=[]
         
+        s_r=User.query.all()
         for s in search:
-            s_r=User.query.filter_by(username=s).all()
             for sr in s_r:
-                name_username={
-                                'name':sr.name,
-                                'username':sr.username}
-                if name_username not in search_results:
-                    search_results.append(name_username)
+                
+                if sr.username.lower()==s.lower() or s.lower() in [name.lower() for name in sr.name.split()]:
+                    name_username={
+                                    'name':sr.name,
+                                    'username':sr.username}
+                    if name_username not in search_results:
+                        search_results.append(name_username)
         
         return {'search_results':search_results},200
