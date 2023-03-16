@@ -6,14 +6,14 @@ import os
 from flask import current_app
 from blog_app_lite import db
 from blog_app_lite.models import User,Posts,Followings
-from sqlalchemy import or_
 
 
 post_rf={
     'id':fields.Integer,
     'title':fields.String,
     'description':fields.String,
-    'timestamp':fields.String,
+    'created':fields.String,
+    'modified':fields.String,
     'imageurl':fields.String
 }
 posts_rf={
@@ -40,7 +40,7 @@ class Post(Resource):
         else :
             imageurl=None
             
-        newPost=Posts(title=title,description=desc,imageurl=imageurl,timestamp=str(time),userID=user_id)
+        newPost=Posts(title=title,description=desc,imageurl=imageurl,created=str(time),modified=str(time),userID=user_id)
         db.session.add(newPost)
         db.session.commit()    
         
@@ -53,7 +53,55 @@ class Post(Resource):
         
         return marshal({'posts':posts},posts_rf),200
         
+    @auth_token_required
+    def put(self):
+        user_id=current_user.id
+        post_id=request.args.get('id')
         
+        post=Posts.query.filter_by(id=post_id,userID=user_id).first()
+        if post==None:
+            return 400
+        
+        post.title=request.form['title']
+        time=datetime.now()
+        
+        if 'description' in request.form:
+            post.description=request.form['description']
+        else:
+            post.description=None
+        
+        if post.imageurl is not None:
+            os.remove(post.imageurl)
+        
+        if 'image' in request.files:
+            image = request.files['image']
+            image_name=str(user_id)+'_'+time.strftime('%Y-%m-%d-%H-%M-%S-%f')+'_'+str(image.filename)
+            post.imageurl=os.path.join(current_app.config['UPLOAD_FOLDER'],image_name)
+            image.save(post.imageurl)
+        else :
+            post.imageurl=None
+            
+        post.modified=str(time)
+        db.session.commit()
+        
+        return 200
+    
+    @auth_token_required
+    def delete(self):
+        user_id=current_user.id
+        post_id=request.json['id']
+        post=Posts.query.filter_by(id=post_id,userID=user_id).first()
+        if post==None:
+            return 400
+        
+        if post.imageurl is not None:
+            os.remove(post.imageurl)
+        db.session.delete(post)
+        db.session.commit()
+        
+        return 200
+
+
 
 class Follow(Resource):
     @auth_token_required

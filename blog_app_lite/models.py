@@ -42,7 +42,8 @@ class Posts(db.Model):
     title = db.Column(db.String, nullable=False)
     description = db.Column(db.String)
     imageurl = db.Column(db.String)
-    timestamp = db.Column(db.String,nullable=False)
+    created = db.Column(db.String,nullable=False)
+    modified = db.Column(db.String,nullable=False)
     userID = db.Column(db.Integer,db.ForeignKey("user.id"),nullable=False)
     
     
