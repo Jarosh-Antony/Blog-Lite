@@ -109,7 +109,7 @@ class Follow(Resource):
         follower_id=current_user.id
         
         try:
-            following_id=User.query.filter_by(username=request.json['to_follow']).first().id
+            following_id=User.query.filter_by(username=request.json['follow']).first().id
         except:
             return 400
         if follower_id==following_id:
@@ -121,6 +121,23 @@ class Follow(Resource):
         
         return 200
         
+    @auth_token_required
+    def delete(self):
+        follower_id=current_user.id
+        
+        try:
+            following_id=User.query.filter_by(username=request.json['follow']).first().id
+        except:
+            return 400
+        
+        follow=Followings.query.filter_by(follower_id=follower_id,following_id=following_id).first()
+        if follow == None:
+            return 400
+        
+        db.session.delete(follow)
+        db.session.commit()
+        
+        return 200
         
 class Feed(Resource):
     @auth_token_required
