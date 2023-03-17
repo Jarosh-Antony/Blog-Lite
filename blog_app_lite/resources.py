@@ -3,7 +3,7 @@ from flask_security import current_user, auth_token_required
 from flask import request, redirect, url_for
 from datetime import datetime
 import os
-from flask import current_app
+from flask import current_app as app
 from blog_app_lite import db
 from blog_app_lite.models import User,Posts,Followings
 
@@ -35,7 +35,7 @@ class Post(Resource):
         if 'image' in request.files:
             image = request.files['image']
             image_name=str(user_id)+'_'+time.strftime('%Y-%m-%d-%H-%M-%S-%f')+'_'+str(image.filename)
-            imageurl=os.path.join(current_app.config['UPLOAD_FOLDER'],image_name)
+            imageurl=os.path.join(app.config['UPLOAD_FOLDER'],image_name)
             image.save(imageurl)
         else :
             imageurl=None
@@ -76,7 +76,7 @@ class Post(Resource):
         if 'image' in request.files:
             image = request.files['image']
             image_name=str(user_id)+'_'+time.strftime('%Y-%m-%d-%H-%M-%S-%f')+'_'+str(image.filename)
-            post.imageurl=os.path.join(current_app.config['UPLOAD_FOLDER'],image_name)
+            post.imageurl=os.path.join(app.config['UPLOAD_FOLDER'],image_name)
             image.save(post.imageurl)
         else :
             post.imageurl=None

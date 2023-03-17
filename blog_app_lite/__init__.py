@@ -32,6 +32,7 @@ def create_app(configuration=None):
     
     from blog_app_lite.models import User,Role
     from blog_app_lite.api import api
+    from blog_app_lite import routes
     
     api.init_app(app)
     app.app_context().push()
@@ -40,7 +41,7 @@ def create_app(configuration=None):
     app.security=Security(app, user_datastore,register_form=ExtendedRegisterForm,confirm_register_form=ExtendedRegisterForm)
     return app
 
-print('NAME ===============',__name__)
+print('NAME =========================================================================',__name__)
 if __name__ =='__main__':
     
     create_app()

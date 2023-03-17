@@ -1,31 +1,56 @@
 {% extends "security/base.html" %}
 {% from "security/_macros.html" import render_field_with_errors, render_field, render_field_errors, render_form_errors, prop_next %}
 
+{% block styles %}
+{% endblock %}
+
+
 {% block content %}
 {% include "security/_messages.html" %}
-<h1>{{ _fsdomain('Login') }}</h1>
-  <form action="{{ url_for_security('login') }}{{ prop_next() }}" method="POST" name="login_user_form">
-    {{ login_user_form.hidden_tag() }}
-    {{ render_form_errors(login_user_form) }}
-    {% if "email" in identity_attributes %}
-      {{ render_field_with_errors(login_user_form.email) }}
-    {% endif %}
-    {% if login_user_form.username and "username" in identity_attributes %}
-      {% if "email" in identity_attributes %}
-        <h3>{{ _fsdomain("or") }}</h3>
-      {% endif %}
-      {{ render_field_with_errors(login_user_form.username) }}
-    {% endif %}
-    <div class="fs-gap">
-      {{ render_field_with_errors(login_user_form.password) }}</div>
-    {{ render_field_with_errors(login_user_form.remember) }}
-    {{ render_field_errors(login_user_form.csrf_token) }}
-    {{ render_field(login_user_form.submit) }}
-  </form>
- 
-{% include "security/_menu.html" %}
+	<div class="container" style="max-width: 480px;">
+		<div class="card">
+		  <div class="card-header">
+			<ul class="nav nav-tabs card-header-tabs">
+			  <li class="nav-item">
+				<button class="nav-link active" aria-current="true">Login</button>
+			  </li>
+			  <li class="nav-item">
+				<button class="nav-link">Register</button>
+			  </li>
+			</ul>
+		  </div>
+		  <div class="card-body">
+			
+			
+			<form>
+				<div class="mb-3">
+					<label for="exampleInputEmail1" class="form-label">Username or Email</label>
+					<input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+				</div>
+				<div class="mb-3">
+					<label for="exampleInputPassword1" class="form-label">Password</label>
+					<input type="password" class="form-control" id="exampleInputPassword1">
+				</div>
+				<div class="d-grid gap-2">
+					<button type="submit" class="btn btn-outline-primary" >Login</button>
+				</div>
+			</form>
+		  </div>
+		</div>
+		
+		
+	</div>
+<!-- {% include "security/_menu.html" %} -->
 {% endblock %}
 
 {% block scripts %}
-	<script src="/static/js/check.js"></script>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" 
+		   rel="stylesheet" 
+		   integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" 
+		   crossorigin="anonymous">
+		   
+	<!-- <script 	    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"  -->
+			  <!-- integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"  -->
+			<!-- crossorigin="anonymous"> -->
+	<!-- </script> -->
 {% endblock %}
