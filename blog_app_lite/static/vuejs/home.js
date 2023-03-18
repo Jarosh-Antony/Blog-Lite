@@ -1,14 +1,8 @@
-//import Vue from 'vue'
 new Vue({
-	el:"#app",
+	el:"#posts",
 	data(){
 		return {
-			id:-1,
-            title: "post_dummy",
-            description: "this is my dummy description",
-            created: "dummy date",
-            modified: "dummy date modified",
-            imageurl: "dummy link"
+			posts:[]
 		}
 	},
 	mounted(){
@@ -20,9 +14,9 @@ new Vue({
 			}
 		})
 		.then(response=>response.json())
-		.then(data=>data.posts)
-		.then(posts=>{
-			
+		.then(data=>{
+			this.posts=data.posts
 		})
+		
 	}
 })
