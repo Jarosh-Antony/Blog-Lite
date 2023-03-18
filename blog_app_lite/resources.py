@@ -5,6 +5,7 @@ from datetime import datetime
 import os
 from flask import current_app as app
 from blog_app_lite import db
+from sqlalchemy import func
 from blog_app_lite.models import User,Posts,Followings
 
 
@@ -14,7 +15,9 @@ post_rf={
     'description':fields.String,
     'created':fields.String,
     'modified':fields.String,
-    'imageurl':fields.String
+    'imageurl':fields.String,
+    'username':fields.String,
+    'name':fields.String
 }
 posts_rf={
     'posts':fields.List(fields.Nested(post_rf))
@@ -48,8 +51,14 @@ class Post(Resource):
     
     @auth_token_required
     def get(self):
-        user_id=current_user.id
-        posts=Posts.query.filter_by(userID=user_id).all()
+        username=request.args.get('username')
+        posts_query=(
+            db.select(Posts)
+            .join(User,User.id==Posts.userID)
+            .where(User.username==username)
+            .order_by(Posts.created.desc())
+        )
+        posts=db.session.execute(posts_query).scalars().all()
         
         return marshal({'posts':posts},posts_rf),200
         
@@ -143,16 +152,22 @@ class Feed(Resource):
     @auth_token_required
     def get(self):
         user_id=current_user.id
-        following=Followings.query.filter_by(follower_id=user_id).all()
-        following_id=[f.id for f in following]
+        
+        posts_query=(
+            db.select(Posts,User.username,User.name)
+            .join(Followings,Followings.following_id==Posts.userID)
+            .join(User,User.id==Posts.userID)
+            .where(Followings.follower_id==user_id)
+            .order_by(Posts.created.desc())
+        )
+        result=db.session.execute(posts_query)
         
         posts=[]
-        for f_id in following_id:
-            post=Posts.query.filter_by(userID=f_id).all()
-            for p in post:
-                posts.append(p)
+        for post,username,name in result:
+            post.username=username
+            post.name=name
+            posts.append(post)
         
-
         return marshal({'posts':posts},posts_rf),200
 
 
@@ -175,3 +190,39 @@ class Search(Resource):
                         search_results.append(name_username)
         
         return {'search_results':search_results},200
+
+
+class Statistics(Resource):
+    @auth_token_required
+    def get(self):
+        username=request.args.get('username')
+        data={}
+        
+        user_query=(
+            db.select(User.name,User.id)
+            .where(User.username==username)
+        )
+        user=db.session.execute(user_query).first()
+        data['name']=user[0]
+        
+        posts_query=(
+            db.select(func.count())
+            .select_from(Posts)
+            .where(user[1]==Posts.userID)
+        )
+        data['posts']=db.session.execute(posts_query).scalar()
+        
+        followings_query=(
+            db.select(func.count())
+            .select_from(Followings)
+            .where(Followings.follower_id==user[1])
+        )
+        data['followings']=db.session.execute(followings_query).scalar()
+        
+        followers_query=(
+            db.select(func.count())
+            .select_from(Followings)
+            .where(Followings.following_id==user[1])
+        )
+        data['followers']=db.session.execute(followers_query).scalar()
+        return data,200
