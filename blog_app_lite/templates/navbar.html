@@ -1,0 +1,46 @@
+{% raw %}
+<div id="nav-vue-app">
+	<header class="navbar fixed-top navbar-expand-lg bg-body-tertiary">
+	  <nav class="container-fluid">
+	  
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarHome" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+		  <span class="navbar-toggler-icon"></span>
+		</button>
+		
+		<a class="navbar-brand" href="">Blog-Lite</a>
+		
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<a :class="'nav-link '+activeState" :aria-current="isActive" href="/">Home</a>
+		</div>
+		
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSearch" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+		  <span class="navbar-toggler-icon"></span>
+		</button>
+		
+		<div class="collapse navbar-collapse justify-content-center" id="navbarSearch">
+			<form class="d-flex" role="search">
+				<input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+				<button class="btn btn-outline-success" type="submit">Search</button>
+			</form>
+		</div>
+		
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarAccount" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+		  dp
+		</button>
+		
+		<div class="collapse navbar-collapse justify-content-end" id="navbarAccount">
+			  <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+				dp {{user.name}}
+			  </a>
+			  <ul class="dropdown-menu">
+				<li><a class="dropdown-item" :href="'/user/'+user.username">Profile</a></li>
+				<li><a class="dropdown-item" href="/settings">Settings</a></li>
+				<li><hr class="dropdown-divider"></li>
+				<li><a class="dropdown-item" href="/logout">Logout</a></li>
+			  </ul>
+		</div>
+	  </nav>
+	</header>
+</div>
+
+{% endraw %}

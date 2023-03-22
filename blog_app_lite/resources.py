@@ -151,13 +151,13 @@ class Follow(Resource):
 class Feed(Resource):
     @auth_token_required
     def get(self):
-        user_id=current_user.id
+        user=current_user
         
         posts_query=(
             db.select(Posts,User.username,User.name)
             .join(Followings,Followings.following_id==Posts.userID)
             .join(User,User.id==Posts.userID)
-            .where(Followings.follower_id==user_id)
+            .where(Followings.follower_id==user.id)
             .order_by(Posts.created.desc())
         )
         result=db.session.execute(posts_query)

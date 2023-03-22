@@ -2,13 +2,14 @@ new Vue({
 	el:"#posts",
 	data(){
 		return {
-			posts:[]
+			posts:[],
+			username:''
 		}
 	},
 	mounted(){
-		username=window.location.pathname.split('/')[2];
+		this.username='lince'
 		
-		fetch("http://127.0.0.1:5000/api/posts?username="+username,{
+		fetch("http://127.0.0.1:5000/api/posts?username="+this.username,{
 			method: 'GET', 
 			headers: {
 				'Content-Type': 'application/json',
@@ -31,7 +32,7 @@ new Vue({
 		}
 	},
 	mounted(){
-		this.username=window.location.pathname.split('/')[2];
+		this.username='lince'
 		
 		fetch("http://127.0.0.1:5000/api/statistics?username="+this.username,{
 			method: 'GET', 

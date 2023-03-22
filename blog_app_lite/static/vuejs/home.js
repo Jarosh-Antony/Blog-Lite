@@ -2,7 +2,7 @@ new Vue({
 	el:"#posts",
 	data(){
 		return {
-			posts:[]
+			posts:[],
 		}
 	},
 	mounted(){
@@ -15,7 +15,7 @@ new Vue({
 		})
 		.then(response=>response.json())
 		.then(data=>{
-			this.posts=data.posts
+			this.posts=data.posts;
 		})
 		
 	}
