@@ -1,5 +1,26 @@
 {% raw %}
 <div id="nav-vue-app">
+
+
+	<div class="modal fade" id="searchResultModal" tabindex="-1" aria-labelledby="searchResultModalLabel" aria-hidden="true">
+	  <div class="modal-dialog modal-dialog-scrollable">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<h1 class="modal-title fs-5" id="searchResultModalLabel">Search Results</h1>
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		  </div>
+		  <div class="modal-body list-group bg-primary" style="--bs-bg-opacity: .3;">
+		  
+			  <a v-for="sr in searchResult" :href="'/user/'+sr.username" class="list-group-item list-group-item-action">
+				(dp) @{{sr.username}} {{sr.name}}
+			  </a>
+			
+		  </div>
+		</div>
+	  </div>
+	</div>
+	
+	
 	<header class="navbar fixed-top navbar-expand-lg bg-body-tertiary">
 	  <nav class="container-fluid">
 	  
@@ -10,7 +31,11 @@
 		<a class="navbar-brand" href="">Blog-Lite</a>
 		
 		<div class="collapse navbar-collapse" id="navbarSupportedContent">
-			<a :class="'nav-link '+activeState" :aria-current="isActive" href="/">Home</a>
+			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+				<li class="nav-item">
+					<a :class="'nav-link '+activeState" :aria-current="isActive" href="/">Home</a>
+				</li>
+			</ul>
 		</div>
 		
 		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSearch" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -19,8 +44,8 @@
 		
 		<div class="collapse navbar-collapse justify-content-center" id="navbarSearch">
 			<form class="d-flex" role="search">
-				<input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-				<button class="btn btn-outline-success" type="submit">Search</button>
+				<input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" v-model="searchTerm">
+				<button class="btn btn-outline-success" type="submit" @click.prevent="search" data-bs-toggle="modal" data-bs-target="#searchResultModal">Search</button>
 			</form>
 		</div>
 		

@@ -174,8 +174,7 @@ class Feed(Resource):
 class Search(Resource):
     @auth_token_required
     def get(self):
-        search=request.json['search'].split(' ')
-        
+        search=request.args.get('search').split()
         search_results=[]
         
         s_r=User.query.all()
