@@ -7,30 +7,30 @@
 		<div class="modal-content">
 		  <div class="modal-header">
 			<h1 class="modal-title fs-5" id="createPostModalLabel">Create New Post</h1>
-			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			<button type="button" class="btn-close" id="modal-closer" data-bs-dismiss="modal" aria-label="Close"></button>
 		  </div>
 		  <div class="modal-body">
 				
-			<form id="newPost">
+			<form id="newPost" ref="newPost">
 				<div class="mb-3">
-					<input class="form-control" id="newPostTitle" type="text" placeholder="Title" aria-label="title for new post" required>
+					<input class="form-control" id="newPostTitle" type="text" placeholder="Title" name="title" aria-label="title for new post" v-model="newPost.title">
 				</div>
 				
 				<div class="mb-3">
-				  <input class="form-control" type="file" id="newPostImage">
+				  <input class="form-control" type="file" id="newPostImage" name="image">
 				</div>
 				
 				<div class="mb-3">
-				  <textarea class="form-control" id="description" placeholder="Caption" aria-label="With textarea"></textarea>
+				  <textarea class="form-control" id="description" name="description" placeholder="Caption" aria-label="With textarea" v-model="newPost.description"></textarea>
 				</div>
 				
 			</form>
 			
 		  </div>
 		  <div class="modal-footer">
-			<button type="button" class="btn btn-outline-secondary">Reset</button>
-			<button type="button" class="btn btn-outline-secondary">Preview</button>
-			<button type="button" class="btn btn-outline-primary">Save changes</button>
+			<button type="button" onclick="document.getElementById('newPost').reset()" class="btn btn-outline-danger">Reset</button>
+			<button type="button" class="btn btn-outline-info">Preview</button>
+			<button type="button" class="btn btn-outline-primary" @click="createNewPost">Save changes</button>
 		  </div>
 		</div>
 	  </div>

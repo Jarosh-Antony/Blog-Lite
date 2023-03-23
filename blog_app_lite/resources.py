@@ -38,8 +38,8 @@ class Post(Resource):
         if 'image' in request.files:
             image = request.files['image']
             image_name=str(user_id)+'_'+time.strftime('%Y-%m-%d-%H-%M-%S-%f')+'_'+str(image.filename)
-            imageurl=os.path.join(app.config['UPLOAD_FOLDER'],image_name)
-            image.save(imageurl)
+            imageurl=os.path.join('/static/post_images/',image_name)
+            image.save(os.path.join(app.config['UPLOAD_FOLDER'],image_name))
         else :
             imageurl=None
             

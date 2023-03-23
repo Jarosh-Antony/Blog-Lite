@@ -6,7 +6,7 @@ new Vue({
 		}
 	},
 	mounted(){
-		fetch("http://127.0.0.1:5000/api/feeds",{
+		fetch("/api/feeds",{
 			method: 'GET', 
 			headers: {
 				'Content-Type': 'application/json',
