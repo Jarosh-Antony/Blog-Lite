@@ -12,7 +12,6 @@ new Vue({
 		fetch("http://127.0.0.1:5000/api/posts?username="+this.username,{
 			method: 'GET', 
 			headers: {
-				'Content-Type': 'application/json',
 				'Authorization': 'WyJhODI4ODEzM2EzZDI0ZThkODJlNzlhZGVmZmU5NDdmZSJd.ZAglwA.hO92UtksDtOiJ0xDDyA4XEy3Omw',
 			}
 		})
@@ -37,7 +36,6 @@ new Vue({
 		fetch("http://127.0.0.1:5000/api/statistics?username="+this.username,{
 			method: 'GET', 
 			headers: {
-				'Content-Type': 'application/json',
 				'Authorization': 'WyJhODI4ODEzM2EzZDI0ZThkODJlNzlhZGVmZmU5NDdmZSJd.ZAglwA.hO92UtksDtOiJ0xDDyA4XEy3Omw',
 			}
 		})

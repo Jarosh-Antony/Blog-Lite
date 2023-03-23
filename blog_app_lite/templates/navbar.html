@@ -2,6 +2,41 @@
 <div id="nav-vue-app">
 
 
+	<div class="modal fade" id="createPostModal" tabindex="-1" aria-labelledby="createPostModalLabel" aria-hidden="true">
+	  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<h1 class="modal-title fs-5" id="createPostModalLabel">Create New Post</h1>
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		  </div>
+		  <div class="modal-body">
+				
+			<form id="newPost">
+				<div class="mb-3">
+					<input class="form-control" id="newPostTitle" type="text" placeholder="Title" aria-label="title for new post" required>
+				</div>
+				
+				<div class="mb-3">
+				  <input class="form-control" type="file" id="newPostImage">
+				</div>
+				
+				<div class="mb-3">
+				  <textarea class="form-control" id="description" placeholder="Caption" aria-label="With textarea"></textarea>
+				</div>
+				
+			</form>
+			
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-outline-secondary">Reset</button>
+			<button type="button" class="btn btn-outline-secondary">Preview</button>
+			<button type="button" class="btn btn-outline-primary">Save changes</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+	
+	
 	<div class="modal fade" id="searchResultModal" tabindex="-1" aria-labelledby="searchResultModalLabel" aria-hidden="true">
 	  <div class="modal-dialog modal-dialog-scrollable">
 		<div class="modal-content">
@@ -24,36 +59,38 @@
 	<header class="navbar fixed-top navbar-expand-lg bg-body-tertiary">
 	  <nav class="container-fluid">
 	  
-		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarHome" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+		<a class="navbar-brand" href="/">Blog-Lite</a>
+		
+		
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 		  <span class="navbar-toggler-icon"></span>
 		</button>
 		
-		<a class="navbar-brand" href="">Blog-Lite</a>
-		
-		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+		<div class="collapse navbar-collapse" id="navbarCollapse">
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
 				<li class="nav-item">
 					<a :class="'nav-link '+activeState" :aria-current="isActive" href="/">Home</a>
 				</li>
+				<li class="nav-item">
+					<a class="nav-link"  style="cursor: pointer;"
+							data-bs-toggle="modal" data-bs-target="#createPostModal">
+					+ Create
+					</a>
+				</li>
 			</ul>
 		</div>
 		
-		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSearch" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-		  <span class="navbar-toggler-icon"></span>
-		</button>
-		
-		<div class="collapse navbar-collapse justify-content-center" id="navbarSearch">
+		<div class="collapse navbar-collapse justify-content-center" id="navbarCollapse">
 			<form class="d-flex" role="search">
 				<input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" v-model="searchTerm">
-				<button class="btn btn-outline-success" type="submit" @click.prevent="search" data-bs-toggle="modal" data-bs-target="#searchResultModal">Search</button>
+				<button class="btn btn-outline-success" type="submit" @click.prevent="search" 
+						data-bs-toggle="modal" data-bs-target="#searchResultModal">
+					Search
+				</button>
 			</form>
 		</div>
 		
-		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarAccount" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-		  dp
-		</button>
-		
-		<div class="collapse navbar-collapse justify-content-end" id="navbarAccount">
+		<div class="collapse navbar-collapse justify-content-end" id="navbarCollapse">
 			  <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 				dp {{user.name}}
 			  </a>
@@ -64,6 +101,7 @@
 				<li><a class="dropdown-item" href="/logout">Logout</a></li>
 			  </ul>
 		</div>
+		
 	  </nav>
 	</header>
 </div>
