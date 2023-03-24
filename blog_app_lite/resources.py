@@ -104,7 +104,7 @@ class Post(Resource):
             return 400
         
         if post.imageurl is not None:
-            os.remove(post.imageurl)
+            os.remove('D:/Programming/IITM BS/MAD II 2023/project/Blog-Lite/blog_app_lite'+post.imageurl)
         db.session.delete(post)
         db.session.commit()
         

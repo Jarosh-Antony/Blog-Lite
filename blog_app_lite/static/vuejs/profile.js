@@ -3,7 +3,9 @@ new Vue({
 	data(){
 		return {
 			posts:[],
-			username:''
+			username:'',
+			logged_in_user:'',
+			toDelete:''
 		}
 	},
 	mounted(){
@@ -15,6 +17,8 @@ new Vue({
 		}
 		
 		this.username=window.location.pathname.split('/')[2];
+		this.logged_in_user=localStorage.getItem('username');
+		
 		fetch("/api/posts?username="+this.username,{
 			method: 'GET', 
 			headers: {
@@ -25,6 +29,38 @@ new Vue({
 		.then(data=>{
 			this.posts=data.posts;
 		})
+	},
+	methods:{
+		editPost(){
+			console.log("edit");
+		},
+		deletePost(){
+			
+			const token=localStorage.getItem('token');
+			const delete_id={
+				id:this.toDelete
+			}
+			fetch("/api/posts",{
+				method: 'DELETE', 
+				headers: {
+					'Authorization':token,
+					'Content-Type':'application/json'
+				},
+				body:JSON.stringify(delete_id)
+			})
+			.then(response=>{
+				if(response.status===200){
+					this.posts=this.posts.filter((post) => {
+						return post.id !== this.toDelete;
+					});
+					document.getElementById("delete-modal-closer").click();
+				}
+			})
+			
+		},
+		setDeleteID(id){
+			this.toDelete=id;
+		}
 	}
 })
 
@@ -34,7 +70,8 @@ new Vue({
 		return {
 			data:{},
 			username:'',
-			profile_pic:''
+			profile_pic:'',
+			logged_in_user:''
 		}
 	},
 	mounted(){
@@ -46,6 +83,8 @@ new Vue({
 		}
 		
 		this.username=window.location.pathname.split('/')[2];
+		this.logged_in_user=localStorage.getItem('username');
+		
 		fetch("/api/statistics?username="+this.username,{
 			method: 'GET', 
 			headers: {
