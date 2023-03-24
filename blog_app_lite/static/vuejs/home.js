@@ -6,11 +6,18 @@ new Vue({
 		}
 	},
 	mounted(){
+		
+		const token=localStorage.getItem('token');
+		if(token===null){
+			const currentUrl = window.location.pathname;
+			window.location.href = `/login?next=${encodeURIComponent(currentUrl)}`;
+		}
+		
 		fetch("/api/feeds",{
 			method: 'GET', 
 			headers: {
 				'Content-Type': 'application/json',
-				'Authorization': 'WyJhODI4ODEzM2EzZDI0ZThkODJlNzlhZGVmZmU5NDdmZSJd.ZAglwA.hO92UtksDtOiJ0xDDyA4XEy3Omw',
+				'Authorization':token
 			}
 		})
 		.then(response=>response.json())

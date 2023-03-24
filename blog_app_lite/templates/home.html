@@ -22,7 +22,7 @@
 					
 						<div class="row">
 							<div class="col" style="max-width:50px;">
-								<img :src="post.imageurl" class="rounded-circle" style="width:40px;height:40px;" alt="Couldn't load">
+								<img :src="post.profile_pic" class="rounded-circle" style="width:40px;height:40px;" alt="Couldn't load">
 							</div>
 							<div class="col">
 								{{post.name}}
@@ -35,7 +35,7 @@
 					
 					<div class="card-body">
 						<h4>{{post.title}}</h4>
-						<img :src="post.imageurl" class="img-thumbnail" alt="Couldn't load">
+						<img v-if="post.imageurl!==null" :src="post.imageurl" class="img-thumbnail" alt="Couldn't load">
 						<figcaption class="figure-caption">Posted on : {{post.created}}</figcaption>
 						<figcaption v-if="post.created!=post.modified" class="figure-caption">Edited on : {{post.modified}}</figcaption>
 						<br>

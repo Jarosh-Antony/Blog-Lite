@@ -13,22 +13,22 @@
 				
 			<form id="newPost" ref="newPost">
 				<div class="mb-3">
-					<input class="form-control" id="newPostTitle" type="text" placeholder="Title" name="title" aria-label="title for new post" v-model="newPost.title">
+					<input class="form-control" id="newPostTitle" type="text" placeholder="Title" name="title" aria-label="title for new post">
 				</div>
 				
 				<div class="mb-3">
-				  <input class="form-control" type="file" id="newPostImage" name="image">
+				  <input class="form-control" type="file" id="newPostImage" name="image" accept="image/*">
 				</div>
 				
 				<div class="mb-3">
-				  <textarea class="form-control" id="description" name="description" placeholder="Caption" aria-label="With textarea" v-model="newPost.description"></textarea>
+				  <textarea class="form-control" id="description" name="description" placeholder="Caption" aria-label="With textarea"></textarea>
 				</div>
 				
 			</form>
 			
 		  </div>
 		  <div class="modal-footer">
-			<button type="button" onclick="document.getElementById('newPost').reset()" class="btn btn-outline-danger">Reset</button>
+			<button type="button" onclick="document.getElementById('newPost').reset()" class="btn btn-outline-danger" id="resetNewPostForm">Reset</button>
 			<button type="button" class="btn btn-outline-info">Preview</button>
 			<button type="button" class="btn btn-outline-primary" @click="createNewPost">Save changes</button>
 		  </div>
@@ -47,7 +47,14 @@
 		  <div class="modal-body list-group bg-primary" style="--bs-bg-opacity: .3;">
 		  
 			  <a v-for="sr in searchResult" :href="'/user/'+sr.username" class="list-group-item list-group-item-action">
-				(dp) @{{sr.username}} {{sr.name}}
+				<div class="row">
+					<div class="col" style="max-width:50px;">
+						<img :src="sr.profile_pic" class="rounded-circle" style="width:40px;height:40px;" alt="Couldn't load">
+					</div>
+					<div class="col">
+						@{{sr.username}} {{sr.name}}
+					</div>
+				</div>
 			  </a>
 			
 		  </div>
@@ -90,16 +97,20 @@
 			</form>
 		</div>
 		
-		<div class="collapse navbar-collapse justify-content-end" id="navbarCollapse">
+		<div class="collapse navbar-collapse justify-content-end text-end" id="navbarCollapse">
+			<div class="nav-item dropdown">
 			  <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-				dp {{user.name}}
+					<img :src="profile_pic" class="rounded-circle" style="width:25px;height:25px;" alt="Couldn't load">
+					&nbsp;&nbsp;
+					{{username}}
 			  </a>
 			  <ul class="dropdown-menu">
-				<li><a class="dropdown-item" :href="'/user/'+user.username">Profile</a></li>
+				<li><a class="dropdown-item" :href="'/user/'+username">Profile</a></li>
 				<li><a class="dropdown-item" href="/settings">Settings</a></li>
 				<li><hr class="dropdown-divider"></li>
 				<li><a class="dropdown-item" href="/logout">Logout</a></li>
 			  </ul>
+			</div>
 		</div>
 		
 	  </nav>

@@ -7,17 +7,23 @@ new Vue({
 		}
 	},
 	mounted(){
-		this.username='lince'
+		const token=localStorage.getItem('token');
 		
+		if(token===null){
+			const currentUrl=window.location.pathname;
+			window.location.href = `/login?next=${encodeURIComponent(currentUrl)}`;
+		}
+		
+		this.username=window.location.pathname.split('/')[2];
 		fetch("/api/posts?username="+this.username,{
 			method: 'GET', 
 			headers: {
-				'Authorization': 'WyJhODI4ODEzM2EzZDI0ZThkODJlNzlhZGVmZmU5NDdmZSJd.ZAglwA.hO92UtksDtOiJ0xDDyA4XEy3Omw',
+				'Authorization':token
 			}
 		})
 		.then(response=>response.json())
 		.then(data=>{
-			this.posts=data.posts
+			this.posts=data.posts;
 		})
 	}
 })
@@ -27,16 +33,23 @@ new Vue({
 	data(){
 		return {
 			data:{},
-			username:''
+			username:'',
+			profile_pic:''
 		}
 	},
 	mounted(){
-		this.username='lince'
+		const token=localStorage.getItem('token');
+		this.profile_pic="/static/dp/no_dp.png";
+		if(token===null){
+			const currentUrl=window.location.pathname;
+			window.location.href = `/login?next=${encodeURIComponent(currentUrl)}`;
+		}
 		
+		this.username=window.location.pathname.split('/')[2];
 		fetch("/api/statistics?username="+this.username,{
 			method: 'GET', 
 			headers: {
-				'Authorization': 'WyJhODI4ODEzM2EzZDI0ZThkODJlNzlhZGVmZmU5NDdmZSJd.ZAglwA.hO92UtksDtOiJ0xDDyA4XEy3Omw',
+				'Authorization':token
 			}
 		})
 		.then(response=>response.json())

@@ -17,7 +17,8 @@ post_rf={
     'modified':fields.String,
     'imageurl':fields.String,
     'username':fields.String,
-    'name':fields.String
+    'name':fields.String,
+    'profile_pic':fields.String
 }
 posts_rf={
     'posts':fields.List(fields.Nested(post_rf))
@@ -29,7 +30,6 @@ class Post(Resource):
         user_id=current_user.id
         title=request.form['title']
         time=datetime.now()
-        
         if 'description' in request.form:
             desc=request.form['description']
         else:
@@ -154,7 +154,7 @@ class Feed(Resource):
         user=current_user
         
         posts_query=(
-            db.select(Posts,User.username,User.name)
+            db.select(Posts,User.username,User.name,User.profile_pic)
             .join(Followings,Followings.following_id==Posts.userID)
             .join(User,User.id==Posts.userID)
             .where(Followings.follower_id==user.id)
@@ -163,9 +163,10 @@ class Feed(Resource):
         result=db.session.execute(posts_query)
         
         posts=[]
-        for post,username,name in result:
+        for post,username,name,profile_pic in result:
             post.username=username
             post.name=name
+            post.profile_pic=profile_pic
             posts.append(post)
         
         return marshal({'posts':posts},posts_rf),200
@@ -184,7 +185,9 @@ class Search(Resource):
                 if sr.username.lower()==s.lower() or s.lower() in [name.lower() for name in sr.name.split()]:
                     name_username={
                                     'name':sr.name,
-                                    'username':sr.username}
+                                    'username':sr.username,
+                                    'profile_pic':sr.profile_pic
+                                }
                     if name_username not in search_results:
                         search_results.append(name_username)
         

@@ -12,6 +12,7 @@ class User(db.Model,UserMixin):
     password = db.Column(db.String, nullable=False)
     active = db.Column(db.Boolean, nullable=False, default=True)
     fs_uniquifier = db.Column(db.String(64), nullable=False, unique=True)
+    profile_pic = db.Column(db.String, default='/static/dp/no_dp.png')
     post = db.relationship('Posts', cascade="all,delete", backref="User")
     roles = db.relationship('Role', secondary='roles_users',backref=db.backref('users', lazy='dynamic'))
     

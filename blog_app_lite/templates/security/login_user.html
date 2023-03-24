@@ -6,8 +6,7 @@
 
 
 {% block content %}
-{% include "security/_messages.html" %}
-	<div class="container" style="max-width: 480px;">
+	<div id="login" class="container" style="max-width: 480px;">
 		<div class="card">
 		  <div class="card-header">
 			<ul class="nav nav-tabs card-header-tabs">
@@ -25,14 +24,14 @@
 			<form>
 				<div class="mb-3">
 					<label for="exampleInputEmail1" class="form-label">Username or Email</label>
-					<input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+					<input v-model="username" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
 				</div>
 				<div class="mb-3">
 					<label for="exampleInputPassword1" class="form-label">Password</label>
-					<input type="password" class="form-control" id="exampleInputPassword1">
+					<input v-model="password" type="password" class="form-control" id="exampleInputPassword1">
 				</div>
 				<div class="d-grid gap-2">
-					<button type="submit" class="btn btn-outline-primary" >Login</button>
+					<button @click.prevent="login" type="submit" class="btn btn-outline-primary" >Login</button>
 				</div>
 			</form>
 		  </div>
@@ -53,4 +52,6 @@
 			  <!-- integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"  -->
 			<!-- crossorigin="anonymous"> -->
 	<!-- </script> -->
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
+	<script src="/static/vuejs/login.js"></script>
 {% endblock %}

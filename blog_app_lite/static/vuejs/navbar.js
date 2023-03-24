@@ -2,23 +2,18 @@ new Vue({
 	el:"#nav-vue-app",
 	data(){
 		return {
-			user:{},
+			user:'',
 			isActive:false,
 			activeState:'',
 			searchTerm:'',
 			searchResult:[],
-			newPost:{
-				title:'',
-				description:'',
-				image:''
-			}
+			username:'',
+			profile_pic:''
 		}
 	},
 	mounted(){
-		this.user={
-			name:'Lince Mathew',
-			username:'lince'
-		}
+		this.username=localStorage.getItem('username');
+		this.profile_pic="/static/dp/no_dp.png";
 		path=window.location.pathname;
 		if(path=='/'){
 			this.isActive=true;
@@ -43,10 +38,12 @@ new Vue({
 					i+=1;
 				}
 			}
+				
+			const token = localStorage.getItem('token');
 			fetch(url,{
 				method: 'GET', 
 				headers: {
-					'Authorization': 'WyJhODI4ODEzM2EzZDI0ZThkODJlNzlhZGVmZmU5NDdmZSJd.ZAglwA.hO92UtksDtOiJ0xDDyA4XEy3Omw',
+					'Authorization':token
 				}
 			})
 			.then(response=>response.json())
@@ -55,17 +52,25 @@ new Vue({
 			})
 		},
 		createNewPost(){
-			const newPostForm=new FormData(this.$refs.newPost);
+			let newPostForm=new FormData(this.$refs.newPost);
+			if(newPostForm.get("title")==='')
+				newPostForm.delete("title");
+			if(newPostForm.get("image").name==='')
+				newPostForm.delete("image");
+			if(newPostForm.get("description")==='')
+				newPostForm.delete("description");
 			
+			const token = localStorage.getItem('token');
 			fetch("/api/posts",{
 				method: 'POST', 
 				headers: {
-					'Authorization': 'WyJhODI4ODEzM2EzZDI0ZThkODJlNzlhZGVmZmU5NDdmZSJd.ZAglwA.hO92UtksDtOiJ0xDDyA4XEy3Omw'
+					'Authorization':token
 				},
 				body: newPostForm
 			})
 			.then(response=>{
 				if(response.status===200)
+					document.getElementById("resetNewPostForm").click();
 					document.getElementById("modal-closer").click();
 			})
 		}
