@@ -5,7 +5,7 @@ from datetime import datetime
 import os
 from flask import current_app as app
 from blog_app_lite import db
-from sqlalchemy import func
+from sqlalchemy import func,and_
 from blog_app_lite.models import User,Posts,Followings
 
 
@@ -227,4 +227,11 @@ class Statistics(Resource):
             .where(Followings.following_id==user[1])
         )
         data['followers']=db.session.execute(followers_query).scalar()
+        
+        isFollowing_query=(
+            db.select(Followings)
+            .where(and_(Followings.following_id==user[1],Followings.follower_id==current_user.id))
+        )
+        data['isFollowing']=False if db.session.execute(isFollowing_query).scalar() is None else True
+        
         return data,200

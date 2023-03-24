@@ -54,7 +54,49 @@ new Vue({
 		})
 		.then(response=>response.json())
 		.then(data=>{
-			this.data=data
+			this.data=data;
 		})
+	},
+	methods:{
+		follow(){
+			
+			const token=localStorage.getItem('token');
+			const followData={
+				follow:this.username
+			}
+			fetch("/api/follow",{
+				method: 'POST', 
+				headers: {
+					'Authorization':token,
+					'Content-Type':'application/json'
+				},
+				body:JSON.stringify(followData)
+			})
+			.then(response=>{
+				if(response.status===200)
+					this.data.isFollowing=true;
+			})
+			
+		},
+		unfollow(){
+			
+			const token=localStorage.getItem('token');
+			const unfollowData={
+				follow:this.username
+			}
+			fetch("/api/follow",{
+				method: 'DELETE', 
+				headers: {
+					'Authorization':token,
+					'Content-Type':'application/json'
+				},
+				body:JSON.stringify(unfollowData)
+			})
+			.then(response=>{
+				if(response.status===200)
+					this.data.isFollowing=false;
+			})
+			
+		}
 	}
 })
