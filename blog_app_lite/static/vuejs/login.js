@@ -29,8 +29,8 @@ new Vue({
 				console.log(next);
 				if(next)
 					window.location.href=next;
-				// else
-					// window.location.href='/';
+				else
+					window.location.href='/';
 			})
 		}
 	}

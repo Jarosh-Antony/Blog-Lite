@@ -73,6 +73,21 @@ new Vue({
 					document.getElementById("resetNewPostForm").click();
 					document.getElementById("modal-closer").click();
 			})
+		},
+		logout(){
+			fetch("/logout",{
+				method:"POST",
+				headers:{
+					'Content-Type':'application/json'
+				}
+			})
+			.then(response=>{
+				if(response.status===200){
+					localStorage.removeItem('token');
+					localStorage.removeItem('username');
+					window.location.href='/';
+				}
+			})
 		}
 	}
 })
