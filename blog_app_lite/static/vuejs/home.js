@@ -10,7 +10,7 @@ new Vue({
 		const token=localStorage.getItem('token');
 		if(token===null){
 			const currentUrl = window.location.pathname;
-			window.location.href = `/login?next=${encodeURIComponent(currentUrl)}`;
+			window.location.href = `/enter?next=${encodeURIComponent(currentUrl)}`;
 		}
 		
 		fetch("/api/feeds",{

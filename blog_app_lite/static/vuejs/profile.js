@@ -13,7 +13,7 @@ new Vue({
 		
 		if(token===null){
 			const currentUrl=window.location.pathname;
-			window.location.href = `/login?next=${encodeURIComponent(currentUrl)}`;
+			window.location.href = `/enter?next=${encodeURIComponent(currentUrl)}`;
 		}
 		
 		this.username=window.location.pathname.split('/')[2];
@@ -79,7 +79,7 @@ new Vue({
 		this.profile_pic="/static/dp/no_dp.png";
 		if(token===null){
 			const currentUrl=window.location.pathname;
-			window.location.href = `/login?next=${encodeURIComponent(currentUrl)}`;
+			window.location.href = `/enter?next=${encodeURIComponent(currentUrl)}`;
 		}
 		
 		this.username=window.location.pathname.split('/')[2];
