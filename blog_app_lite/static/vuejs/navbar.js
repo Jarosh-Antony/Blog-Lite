@@ -51,12 +51,17 @@ new Vue({
 				this.searchResult=data.search_results;
 			})
 		},
+		
 		createNewPost(){
 			let newPostForm=new FormData(this.$refs.newPost);
+			
 			if(newPostForm.get("title")==='')
 				newPostForm.delete("title");
-			if(newPostForm.get("image").name==='')
+			
+			let imageInput = newPostForm.get("image");
+			if (imageInput && imageInput.name === '')
 				newPostForm.delete("image");
+			
 			if(newPostForm.get("description")==='')
 				newPostForm.delete("description");
 			
@@ -71,9 +76,10 @@ new Vue({
 			.then(response=>{
 				if(response.status===200)
 					document.getElementById("resetNewPostForm").click();
-					document.getElementById("modal-closer").click();
+					window.location.href=window.location.href;
 			})
 		},
+		
 		logout(){
 			fetch("/logout",{
 				method:"POST",

@@ -65,7 +65,7 @@ class Post(Resource):
     @auth_token_required
     def put(self):
         user_id=current_user.id
-        post_id=request.args.get('id')
+        post_id=request.form['id']
         
         post=Posts.query.filter_by(id=post_id,userID=user_id).first()
         if post==None:
@@ -80,13 +80,13 @@ class Post(Resource):
             post.description=None
         
         if post.imageurl is not None:
-            os.remove(post.imageurl)
+            os.remove('D:/Programming/IITM BS/MAD II 2023/project/Blog-Lite/blog_app_lite'+post.imageurl)
         
         if 'image' in request.files:
             image = request.files['image']
             image_name=str(user_id)+'_'+time.strftime('%Y-%m-%d-%H-%M-%S-%f')+'_'+str(image.filename)
-            post.imageurl=os.path.join(app.config['UPLOAD_FOLDER'],image_name)
-            image.save(post.imageurl)
+            post.imageurl=os.path.join('/static/post_images/',image_name)
+            image.save(os.path.join(app.config['UPLOAD_FOLDER'],image_name))
         else :
             post.imageurl=None
             

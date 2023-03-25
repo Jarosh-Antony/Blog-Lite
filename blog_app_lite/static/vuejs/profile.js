@@ -5,7 +5,9 @@ new Vue({
 			posts:[],
 			username:'',
 			logged_in_user:'',
-			toDelete:''
+			toDelete:'',
+			toEditid:'',
+			toEditPost:{}
 		}
 	},
 	mounted(){
@@ -32,7 +34,31 @@ new Vue({
 	},
 	methods:{
 		editPost(){
-			console.log("edit");
+			let editPostForm=new FormData(this.$refs.editPost);
+			if(editPostForm.get("title")==='')
+				editPostForm.delete("title");
+			
+			let imageInput = editPostForm.get("image");
+			if (imageInput && imageInput.name === '')
+				editPostForm.delete("image");
+			
+			if(editPostForm.get("description")==='')
+				editPostForm.delete("description");
+			editPostForm.append('id',this.toEditID);
+			
+			const token = localStorage.getItem('token');
+			fetch("/api/posts",{
+				method: 'PUT', 
+				headers: {
+					'Authorization':token
+				},
+				body: editPostForm
+			})
+			.then(response=>{
+				if(response.status===200){
+					window.location.href=window.location.href;
+				}
+			})
 		},
 		deletePost(){
 			
@@ -50,16 +76,20 @@ new Vue({
 			})
 			.then(response=>{
 				if(response.status===200){
-					this.posts=this.posts.filter((post) => {
-						return post.id !== this.toDelete;
-					});
-					document.getElementById("delete-modal-closer").click();
+					this.toDelete=''
+					window.location.href=window.location.href;
 				}
 			})
 			
 		},
 		setDeleteID(id){
 			this.toDelete=id;
+		},
+		setEditID(id){
+			this.toEditID=id;
+			this.toEditPost={...this.posts.filter((post) => {
+				return post.id === this.toEditID;
+			})[0]};
 		}
 	}
 })
