@@ -8,3 +8,7 @@ def home():
 @app.route("/user/<string:username>",methods=['GET'])
 def profile(username):
     return render_template("profile.html")
+    
+@app.route("/exports",methods=['GET'])
+def exports():
+    return render_template("exports.html")

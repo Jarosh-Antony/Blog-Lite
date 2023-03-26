@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8"/>
+	<title> Exports </title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style>
+	</style>
+	
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" 
+			rel="stylesheet" 
+			integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" 
+			crossorigin="anonymous">
+</head>
+<body class="bg-primary" style="--bs-bg-opacity: .3;padding-top:50px;">
+	
+	{% include "navbar.html" %}
+	{% raw %}
+	
+	<div id="posts">
+	
+		<!-- <div class="modal fade" id="deletePostModal" tabindex="-1" aria-labelledby="deletePostModalLabel" aria-hidden="true"> -->
+		  <!-- <div class="modal-dialog modal-dialog-centered"> -->
+			<!-- <div class="modal-content"> -->
+			  <!-- <div class="modal-header"> -->
+					
+				<!-- <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="red" class="bi bi-exclamation-triangle" viewBox="0 0 16 16"> -->
+				  <!-- <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.146.146 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.163.163 0 0 1-.054.06.116.116 0 0 1-.066.017H1.146a.115.115 0 0 1-.066-.017.163.163 0 0 1-.054-.06.176.176 0 0 1 .002-.183L7.884 2.073a.147.147 0 0 1 .054-.057zm1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566z"/> -->
+				  <!-- <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995z"/> -->
+				<!-- </svg> -->
+				
+			  <!-- </div> -->
+			  <!-- <div class="modal-body"> -->
+					
+				<!-- You are about to delete the post. Are you sure ? -->
+				
+			  <!-- </div> -->
+			  <!-- <div class="modal-footer"> -->
+				<!-- <button type="button" class="btn btn-danger" @click="deletePost">Yes</button> -->
+				<!-- <button type="button" class="btn btn-primary" id="delete-modal-closer" data-bs-dismiss="modal" >No</button> -->
+			  <!-- </div> -->
+			<!-- </div> -->
+		  <!-- </div> -->
+		<!-- </div> -->
+				
+				
+				
+		<!-- <div class="modal fade" id="editPostModal" tabindex="-1" aria-labelledby="deletePostModalLabel" aria-hidden="true"> -->
+		  <!-- <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable"> -->
+			<!-- <div class="modal-content"> -->
+			
+			
+			  <!-- <div class="modal-header"> -->
+				<!-- <h1 class="modal-title fs-5" id="editPostModalLabel">Edit</h1> -->
+				<!-- <button type="button" class="btn-close" id="edit-modal-closer" data-bs-dismiss="modal" aria-label="Close"></button> -->
+			  <!-- </div> -->
+			  
+			  
+			  <!-- <div class="modal-body"> -->
+					
+				<!-- <form id="editPost" ref="editPost"> -->
+					<!-- <div class="mb-3"> -->
+						<!-- <input class="form-control" id="newPostTitle" type="text" name="title" aria-label="title for new post" v-model="toEditPost.title"> -->
+					<!-- </div> -->
+					
+					<!-- <div class="mb-3"> -->
+					  <!-- <input class="form-control" type="file" id="newPostImage" name="image" accept="image/*"> -->
+					<!-- </div> -->
+					
+					<!-- <div class="mb-3"> -->
+					  <!-- <textarea class="form-control" id="description" name="description" aria-label="With textarea" v-model="toEditPost.description"></textarea> -->
+					<!-- </div> -->
+				<!-- </form> -->
+				
+			  <!-- </div> -->
+			  
+			  <!-- <div class="modal-footer"> -->
+				<!-- <button type="button" class="btn btn-outline-dark" id="resetEditPostForm" @click="setEditID(toEditPost.id)">Reset</button> -->
+				<!-- <button type="button" class="btn btn-outline-info">Preview</button> -->
+				<!-- <button type="button" class="btn btn-outline-primary" @click="editPost">Save changes</button> -->
+			  <!-- </div> -->
+			  
+			<!-- </div> -->
+		  <!-- </div> -->
+		<!-- </div> -->
+		
+		<div class="container text-center" style="max-width:1000px;padding-top:30px;">
+			<div class="card">
+				<div class="card-body">
+					<div class="row align-items-center bg-white">
+						<div class="col">
+							<button v-if="posts.length!==checkedPosts.length" type="button" class="btn btn-outline-primary" @click="selectAll">Select All</button>
+							<button v-else type="button" class="btn btn-primary" @click="unselectAll">Select All</button>
+						</div>
+						<div class="col">
+							{{checkedPosts.length}} post<span v-if="checkedPosts.length>1">s</span> selected
+						</div>
+						<div class="col">
+						
+							<button type="button" class="btn btn-outline-primary" @click="exportPosts">Export</button>
+							
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		
+		
+		<div class="container" style="max-width:600px;">
+			<div v-for="post in posts" class="container-flex" style="padding-top:30px;">
+			
+				<div class="btn-group-vertical w-100" role="group" aria-label="Basic checkbox toggle button group">
+					<input type="checkbox" class="btn-check" :id="post.id" :value="post.id" v-model="checkedPosts">
+					<label class="btn" :for="post.id" style="border-width:3px;padding:0rem;">
+						
+						<div class="card">
+							<div class="card-header">
+								<h4>{{post.title}}</h4>
+							</div>
+							<div class="card-body">
+										
+								<img v-if="post.imageurl!==null" :src="post.imageurl" class="img-thumbnail" alt="Couldn't load">
+								{{post.description}}
+							</div>
+							<div class="card-footer">
+								<div class="figure-caption">Posted on : {{post.created}}</div>
+								<div v-if="post.created!=post.modified" class="figure-caption">Edited on : {{post.modified}}</div>
+							</div>
+						</div>
+						
+					</label>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	
+	
+	{% endraw %}
+	
+	
+	
+	
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
+	<script src="/static/vuejs/exports.js"></script>
+	<script src="/static/vuejs/navbar.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" 
+			integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" 
+			crossorigin="anonymous"></script>
+</body>
+
+</html>
