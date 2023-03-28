@@ -4,10 +4,9 @@ from flask import request, redirect, url_for
 from datetime import datetime
 import os
 from flask import current_app as app
-from blog_app_lite import db
+from blog_app_lite.DB import db
 from sqlalchemy import func,and_
 from blog_app_lite.models import User,Posts,Followings
-
 
 post_rf={
     'id':fields.Integer,
@@ -240,7 +239,10 @@ class Statistics(Resource):
 class ExportPosts(Resource):
     @auth_token_required
     def post(self):
+        
+        from blog_app_lite.async_jobs.tasks import csvGen
+        email=current_user.email
         toExport=request.json['postIDs']
         print(toExport)
-        
+        csvGen.delay(toExport,email)
         return 200

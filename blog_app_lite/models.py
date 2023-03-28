@@ -1,4 +1,4 @@
-from blog_app_lite import db
+from blog_app_lite.DB import db
 from flask_security import UserMixin, RoleMixin
 
 

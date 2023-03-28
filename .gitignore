@@ -1,4 +1,5 @@
 venv
+Uvenv
 blogs.db
 __pycache__
 instance
