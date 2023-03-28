@@ -36,12 +36,12 @@ new Vue({
 		exportPosts(){
 			const token=localStorage.getItem('token');
 			
-			fetch("api/exports",{
-				method: 'POSTS', 
+			fetch("api/export",{
+				method: 'POST', 
 				headers: {
 					'Authorization':token,
 					'Content-Type':'application/json'
-				}
+				},
 				body:JSON.stringify({postIDs:this.checkedPosts})
 			})
 			.then(response=>{

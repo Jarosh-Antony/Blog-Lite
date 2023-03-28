@@ -235,3 +235,12 @@ class Statistics(Resource):
         data['isFollowing']=False if db.session.execute(isFollowing_query).scalar() is None else True
         
         return data,200
+        
+
+class ExportPosts(Resource):
+    @auth_token_required
+    def post(self):
+        toExport=request.json['postIDs']
+        print(toExport)
+        
+        return 200
