@@ -8,6 +8,7 @@ import zipfile
 from blog_app_lite import email_sender as es
 from jinja2 import Template
 from flask import current_app
+import os
 
 @app.task()
 def csvGen(toExport,email):
@@ -22,7 +23,7 @@ def csvGen(toExport,email):
     
     time=datetime.now()
     t=time.strftime('%Y-%m-%d-%H-%M-%S-%f')
-    output=email+t
+    output='exports/'+email+t
     csv_filename=output+'.csv'
     images=[]
     with open(csv_filename, 'w', newline='') as csvfile:
@@ -36,7 +37,7 @@ def csvGen(toExport,email):
     
     zip_filename = output+'.zip'
     zip_file = zipfile.ZipFile(zip_filename, 'w')
-    zip_file.write(csv_filename)
+    zip_file.write(csv_filename,arcname=email+t+'.csv')
     
     for i in images:
         with open(current_app.config['POST_FOLDER'] + i, 'rb') as f:
@@ -47,4 +48,7 @@ def csvGen(toExport,email):
         template=Template(file_.read())
         message=template.render()
     es.send_email(email,'Exported Posts/blogs',message,zip_filename)
+    
+    os.remove(csv_filename)
+    os.remove(zip_filename)
     return toExport
