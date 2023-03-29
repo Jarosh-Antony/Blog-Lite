@@ -29,6 +29,27 @@ new Vue({
 		})
 		.then(response=>response.json())
 		.then(data=>{
+			for(let post of data.posts){
+				if(post.imageName!==null){
+					fetch('/api/img?img='+post.imageName, {
+						method: 'GET', 
+						headers: {
+							'Authorization':token
+						},
+						responseType: 'blob'
+					})
+					.then(response => response.blob())
+					.then(blob=>{
+						const imageUrl = URL.createObjectURL(blob);
+						post.imageurl = imageUrl;
+					})
+					.catch(error => {
+						console.log(error);
+					})
+
+				}
+				
+			}
 			this.posts=data.posts;
 		})
 	},

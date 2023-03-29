@@ -1,6 +1,6 @@
 from flask_restful import Resource,fields,marshal
 from flask_security import current_user, auth_token_required
-from flask import request, redirect, url_for
+from flask import request, redirect, url_for,send_file
 from datetime import datetime
 import os
 from flask import current_app as app
@@ -14,6 +14,7 @@ post_rf={
     'description':fields.String,
     'created':fields.String,
     'modified':fields.String,
+    'imageName':fields.String,
     'imageurl':fields.String,
     'username':fields.String,
     'name':fields.String,
@@ -27,6 +28,8 @@ class Post(Resource):
     @auth_token_required
     def post(self):
         user_id=current_user.id
+        username=current_user.username
+        
         title=request.form['title']
         time=datetime.now()
         if 'description' in request.form:
@@ -36,13 +39,12 @@ class Post(Resource):
         
         if 'image' in request.files:
             image = request.files['image']
-            image_name=str(user_id)+'_'+time.strftime('%Y-%m-%d-%H-%M-%S-%f')+'_'+str(image.filename)
-            imageurl=os.path.join('/static/post_images/',image_name)
-            image.save(os.path.join(app.config['UPLOAD_FOLDER'],image_name))
+            imageName=str(username)+'_'+time.strftime('%Y-%m-%d-%H-%M-%S-%f')+'_'+str(image.filename)
+            image.save(os.path.join(app.config['POST_FOLDER'],imageName))
         else :
-            imageurl=None
+            imageName=None
             
-        newPost=Posts(title=title,description=desc,imageurl=imageurl,created=str(time),modified=str(time),userID=user_id)
+        newPost=Posts(title=title,description=desc,imageName=imageName,created=str(time),modified=str(time),userID=user_id)
         db.session.add(newPost)
         db.session.commit()    
         
@@ -64,6 +66,7 @@ class Post(Resource):
     @auth_token_required
     def put(self):
         user_id=current_user.id
+        username=current_user.username
         post_id=request.form['id']
         
         post=Posts.query.filter_by(id=post_id,userID=user_id).first()
@@ -78,16 +81,15 @@ class Post(Resource):
         else:
             post.description=None
         
-        if post.imageurl is not None:
-            os.remove('D:/Programming/IITM BS/MAD II 2023/project/Blog-Lite/blog_app_lite'+post.imageurl)
+        if post.imageName is not None:
+            os.remove(app.config['POST_FOLDER']+post.imageName)
         
         if 'image' in request.files:
             image = request.files['image']
-            image_name=str(user_id)+'_'+time.strftime('%Y-%m-%d-%H-%M-%S-%f')+'_'+str(image.filename)
-            post.imageurl=os.path.join('/static/post_images/',image_name)
-            image.save(os.path.join(app.config['UPLOAD_FOLDER'],image_name))
+            post.imageName=str(username)+'_'+time.strftime('%Y-%m-%d-%H-%M-%S-%f')+'_'+str(image.filename)
+            image.save(app.config['POST_FOLDER']+post.imageName)
         else :
-            post.imageurl=None
+            post.imageName=None
             
         post.modified=str(time)
         db.session.commit()
@@ -102,8 +104,8 @@ class Post(Resource):
         if post==None:
             return 400
         
-        if post.imageurl is not None:
-            os.remove('D:/Programming/IITM BS/MAD II 2023/project/Blog-Lite/blog_app_lite'+post.imageurl)
+        if post.imageName is not None:
+            os.remove(app.config['POST_FOLDER']+post.imageName)
         db.session.delete(post)
         db.session.commit()
         
@@ -243,6 +245,13 @@ class ExportPosts(Resource):
         from blog_app_lite.async_jobs.tasks import csvGen
         email=current_user.email
         toExport=request.json['postIDs']
-        print(toExport)
         csvGen.delay(toExport,email)
         return 200
+        
+        
+class ImageDelivery(Resource):
+    @auth_token_required
+    def get(self):
+        imageName=username=request.args.get('img')
+        imageFile = open(app.config['POST_FOLDER'] + imageName, 'rb')
+        return send_file(imageFile, mimetype='image/png')

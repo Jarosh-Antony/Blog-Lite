@@ -42,7 +42,7 @@ class Posts(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String, nullable=False)
     description = db.Column(db.String)
-    imageurl = db.Column(db.String)
+    imageName = db.Column(db.String)
     created = db.Column(db.String,nullable=False)
     modified = db.Column(db.String,nullable=False)
     userID = db.Column(db.Integer,db.ForeignKey("user.id"),nullable=False)

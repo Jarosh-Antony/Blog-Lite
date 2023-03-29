@@ -47,6 +47,7 @@ def create_app(configuration=None,itis=None):
     
     user_datastore = SQLAlchemyUserDatastore(db,User,Role)
     app.security=Security(app, user_datastore,register_form=ExtendedRegisterForm,confirm_register_form=ExtendedRegisterForm)
+    
     if not itis== None:
         return app,celery
     return app
