@@ -7,6 +7,7 @@ from flask import current_app as app
 from blog_app_lite.DB import db
 from sqlalchemy import func,and_
 from blog_app_lite.models import User,Posts,Followings
+from blog_app_lite.async_jobs.tasks import dailyPDF
 
 post_rf={
     'id':fields.Integer,
@@ -158,7 +159,7 @@ class Feed(Resource):
             db.select(Posts,User.username,User.name,User.profile_pic)
             .join(Followings,Followings.following_id==Posts.userID)
             .join(User,User.id==Posts.userID)
-            .where(Followings.follower_id==user.id)
+            .where(and_(Followings.follower_id==user.id,Posts.modified>=user.last_seen))
             .order_by(Posts.created.desc())
         )
         result=db.session.execute(posts_query)
@@ -170,6 +171,8 @@ class Feed(Resource):
             post.profile_pic=profile_pic
             posts.append(post)
         
+        user.last_seen=str(datetime.now())
+        db.session.commit()
         return marshal({'posts':posts},posts_rf),200
 
 
@@ -255,3 +258,10 @@ class ImageDelivery(Resource):
         imageName=username=request.args.get('img')
         imageFile = open(app.config['POST_FOLDER'] + imageName, 'rb')
         return send_file(imageFile, mimetype='image/png')
+        
+
+class DailyPDF(Resource):
+    @auth_token_required
+    def get(self):
+        dailyPDF.delay()
+        return 200

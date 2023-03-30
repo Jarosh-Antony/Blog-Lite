@@ -8,7 +8,7 @@ SMTP_SERVER_PORT=1025
 SENDER_ADDRESS='jaro@gmail.com'
 SENDER_PASSWORD=''
 
-def send_email(to,sub,message,file):
+def send_email(to,sub,message,file=None):
     msg=MIMEMultipart()
     msg['From']=SENDER_ADDRESS
     msg['To']=to
@@ -16,10 +16,11 @@ def send_email(to,sub,message,file):
     
     msg.attach(MIMEText(message,"html"))
 
-    with open(file, 'rb') as f:
-        attach = MIMEApplication(f.read(), _subtype='zip')
-        attach.add_header('Content-Disposition', 'attachment', filename=file)
-        msg.attach(attach)
+    if not file==None:
+        with open(file, 'rb') as f:
+            attach = MIMEApplication(f.read(), _subtype='zip')
+            attach.add_header('Content-Disposition', 'attachment', filename=file)
+            msg.attach(attach)
     
     s=smtplib.SMTP(host=SMTP_SERVER_HOST,port=SMTP_SERVER_PORT)
     s.login(SENDER_ADDRESS,SENDER_PASSWORD)
