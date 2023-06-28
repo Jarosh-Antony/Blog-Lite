@@ -6,8 +6,9 @@ import os
 from flask import current_app as app
 from blog_app_lite.DB import db
 from sqlalchemy import func,and_
-from blog_app_lite.models import User,Posts,Followings
-from blog_app_lite.async_jobs.tasks import dailyPDF
+from blog_app_lite.models import User,Posts,Followings,MonthlyStat
+from blog_app_lite.async_jobs.tasks import dailyPDF,monthlyReport
+from blog_app_lite.cache import cache
 
 post_rf={
     'id':fields.Integer,
@@ -47,11 +48,20 @@ class Post(Resource):
             
         newPost=Posts(title=title,description=desc,imageName=imageName,created=str(time),modified=str(time),userID=user_id)
         db.session.add(newPost)
+        
+        try:
+            MS=MonthlyStat.query.filter_by(userID=user_id).first()
+            MS.post_count+=1
+        except:
+            addUser=MonthlyStat(post_count=1,userID=user_id)
+            db.session.add(addUser)
+            
         db.session.commit()    
         
         return 200
     
     @auth_token_required
+    @cache.cached(timeout=50)
     def get(self):
         username=request.args.get('username')
         posts_query=(
@@ -61,6 +71,14 @@ class Post(Resource):
             .order_by(Posts.created.desc())
         )
         posts=db.session.execute(posts_query).scalars().all()
+        for post in posts:
+            created=post.created
+            created=created.split('.')[0]
+            time=created
+            if created.split(' ')[1] <'12:00:00':
+                post.created=created+' AM'
+            else :
+                post.created=created+' PM'
         
         return marshal({'posts':posts},posts_rf),200
         
@@ -93,6 +111,14 @@ class Post(Resource):
             post.imageName=None
             
         post.modified=str(time)
+        
+        try:
+            MS=MonthlyStat.query.filter_by(userID=user_id).first()
+            MS.edit_count+=1
+        except:
+            addUser=MonthlyStat(edit_count=1,userID=user_id)
+            db.session.add(addUser)
+            
         db.session.commit()
         
         return 200
@@ -108,6 +134,14 @@ class Post(Resource):
         if post.imageName is not None:
             os.remove(app.config['POST_FOLDER']+post.imageName)
         db.session.delete(post)
+        
+        try:
+            MS=MonthlyStat.query.filter_by(userID=user_id).first()
+            MS.delete_count+=1
+        except:
+            addUser=MonthlyStat(delete_count=1,userID=user_id)
+            db.session.add(addUser)
+            
         db.session.commit()
         
         return 200
@@ -128,8 +162,15 @@ class Follow(Resource):
             
         newFollow=Followings(follower_id=follower_id,following_id=following_id)
         db.session.add(newFollow)
-        db.session.commit()
         
+        try:
+            MS=MonthlyStat.query.filter_by(userID=following_id).first()
+            MS.follow_count+=1
+        except:
+            addUser=MonthlyStat(follow_count=1,userID=following_id)
+            db.session.add(addUser)
+        
+        db.session.commit()
         return 200
         
     @auth_token_required
@@ -145,6 +186,13 @@ class Follow(Resource):
         if follow == None:
             return 400
         
+        try:
+            MS=MonthlyStat.query.filter_by(userID=following_id).first()
+            MS.unfollow_count+=1
+        except:
+            addUser=MonthlyStat(unfollow_count=1,userID=following_id)
+            db.session.add(addUser)
+        
         db.session.delete(follow)
         db.session.commit()
         
@@ -155,26 +203,34 @@ class Feed(Resource):
     def get(self):
         user=current_user
         
-        posts_query=(
-            db.select(Posts,User.username,User.name,User.profile_pic)
-            .join(Followings,Followings.following_id==Posts.userID)
-            .join(User,User.id==Posts.userID)
-            # .where(and_(Followings.follower_id==user.id,Posts.modified>=user.last_seen))
-            .where(Followings.follower_id==user.id)
-            .order_by(Posts.created.desc())
-        )
-        result=db.session.execute(posts_query)
-        
-        posts=[]
-        for post,username,name,profile_pic in result:
-            post.username=username
-            post.name=name
-            post.profile_pic=profile_pic
-            posts.append(post)
-        
+        cache_key='home_'+str(user.id)
+        api_result=cache.get(cache_key)
+
+        if api_result is None:
+            posts_query=(
+                db.select(Posts,User.username,User.name,User.profile_pic)
+                .join(Followings,Followings.following_id==Posts.userID)
+                .join(User,User.id==Posts.userID)
+                # .where(and_(Followings.follower_id==user.id,Posts.modified>=user.last_seen))
+                .where(Followings.follower_id==user.id)
+                .order_by(Posts.created.desc())
+            )
+            result=db.session.execute(posts_query)
+            
+            posts=[]
+            for post,username,name,profile_pic in result:
+                post.username=username
+                post.name=name
+                post.profile_pic=profile_pic
+                posts.append(post)
+            
+            api_result=marshal({'posts':posts},posts_rf)
+            cache.set(cache_key,api_result,timeout=60)
+            
         user.last_seen=str(datetime.now())
         db.session.commit()
-        return marshal({'posts':posts},posts_rf),200
+            
+        return api_result,200
 
 
 class Search(Resource):
@@ -184,6 +240,7 @@ class Search(Resource):
         search_results=[]
         
         s_r=User.query.all()
+        usernames=[]
         for s in search:
             for sr in s_r:
                 
@@ -195,6 +252,19 @@ class Search(Resource):
                                 }
                     if name_username not in search_results:
                         search_results.append(name_username)
+                        usernames.append(name_username['username'])
+        
+        user_ids = db.session.query(User.id).filter(User.username.in_(usernames)).all()
+        user_ids = [id for (id,) in user_ids]
+        
+        for id in user_ids:
+            try:
+                MS=MonthlyStat.query.filter_by(userID=id).first()
+                MS.search_count+=1
+            except:
+                addUser=MonthlyStat(search_count=1,userID=id)
+                db.session.add(addUser)
+        db.session.commit()
         
         return {'search_results':search_results},200
 
@@ -239,6 +309,14 @@ class Statistics(Resource):
         )
         data['isFollowing']=False if db.session.execute(isFollowing_query).scalar() is None else True
         
+        try:
+            MS=MonthlyStat.query.filter_by(userID=user[1]).first()
+            MS.view_count+=1
+        except:
+            addUser=MonthlyStat(view_count=1,userID=user[1])
+            db.session.add(addUser)
+        db.session.commit()
+        
         return data,200
         
 
@@ -265,4 +343,10 @@ class DailyPDF(Resource):
     @auth_token_required
     def get(self):
         dailyPDF.delay()
+        return 200
+        
+class MonthlyReport(Resource):
+    @auth_token_required
+    def get(self):
+        monthlyReport.delay()
         return 200

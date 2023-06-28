@@ -11,6 +11,7 @@ from flask_sqlalchemy import SQLAlchemy
 from blog_app_lite import workers
 from dotenv import load_dotenv,dotenv_values
 load_dotenv()
+from celery.schedules import crontab
 
 class ExtendedRegisterForm(RegisterForm):
     name = StringField('Name', [DataRequired()])
@@ -42,11 +43,26 @@ def create_app(configuration=None,itis=None):
         broker_url = 'redis://localhost:6379/0',
         result_backend = 'redis://localhost:6379/1'
     )
+    celery.conf.timezone='Asia/Calcutta'
     celery.Task=workers.ContextTask
+    celery.conf.beat_schedule = {
+        'send_daily_report': {
+            'task': 'blog_app_lite.async_jobs.tasks.dailyPDF',
+            'schedule': crontab(hour=17,minute=23),
+        },
+        'send_monthly_report': {
+            'task': 'blog_app_lite.async_jobs.tasks.monthlyReport',
+            'schedule': crontab(0,0,day_of_month='1'),
+        },
+    }
     app.app_context().push()
     
     user_datastore = SQLAlchemyUserDatastore(db,User,Role)
     app.security=Security(app, user_datastore,register_form=ExtendedRegisterForm,confirm_register_form=ExtendedRegisterForm)
+    
+    from blog_app_lite.cache import cache
+    cache.init_app(app)
+    app.app_context().push()
     
     if not itis== None:
         return app,celery

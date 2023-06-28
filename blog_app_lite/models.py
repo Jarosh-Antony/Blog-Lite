@@ -15,6 +15,7 @@ class User(db.Model,UserMixin):
     profile_pic = db.Column(db.String,nullable=False, default='/static/dp/no_dp.png')
     last_seen = db.Column(db.String, nullable=False,default='0')
     post = db.relationship('Posts', cascade="all,delete", backref="User")
+    stat = db.relationship('MonthlyStat', cascade="all,delete", backref="User")
     roles = db.relationship('Role', secondary='roles_users',backref=db.backref('users', lazy='dynamic'))
     
     
@@ -57,5 +58,15 @@ class Followings(db.Model):
     following_id=db.Column('following', db.Integer,db.ForeignKey('user.id'),nullable=False)
     
     
+class MonthlyStat(db.Model):
+    __tablename__="monthly_stat"
     
-    
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    follow_count=db.Column(db.Integer,default=0)
+    post_count=db.Column(db.Integer,default=0)
+    unfollow_count=db.Column(db.Integer,default=0)
+    edit_count=db.Column(db.Integer,default=0)
+    delete_count=db.Column(db.Integer,default=0)
+    search_count=db.Column(db.Integer,default=0)
+    view_count=db.Column(db.Integer,default=0)
+    userID = db.Column(db.Integer,db.ForeignKey("user.id"),nullable=False)

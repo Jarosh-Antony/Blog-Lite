@@ -5,3 +5,6 @@ instance
 .env
 blogs.db-journal
 .coverage
+21f2000734.zip
+21f2000734_old.zip
+celerybeat-schedule

@@ -1,6 +1,6 @@
 from blog_app_lite.workers import celery as app
 from blog_app_lite.DB import db
-from blog_app_lite.models import User,Posts,Followings
+from blog_app_lite.models import User,Posts,Followings,MonthlyStat
 from sqlalchemy import func,and_
 import csv
 from datetime import datetime
@@ -9,6 +9,7 @@ from blog_app_lite import email_sender as es
 from jinja2 import Template
 from flask import current_app
 import os
+from celery.schedules import crontab
 
 @app.task()
 def csvGen(toExport,email):
@@ -101,3 +102,32 @@ def dailyPDF():
     return True
 
 
+@app.task()
+def monthlyReport():
+    users=User.query.all()
+    
+    for user in users:
+        stat=MonthlyStat.query.filter_by(userID=user.id).first()
+        
+        showStat=True
+        if stat==None:
+            showStat=False
+        elif stat.follow_count==0 and stat.unfollow_count==0 and stat.edit_count==0 and stat.post_count==0 and stat.delete_count==0 and stat.view_count==0 and stat.search_count==0:
+            showStat=False
+        
+        with open('blog_app_lite/templates/monthlyReport.html') as file_:
+            template=Template(file_.read())
+            message=template.render(name=user.name,showStat=showStat,stat=stat)
+        es.send_email(user.email,'Monthly Report',message)
+        
+        if not stat==None:
+            stat.follow_count=0
+            stat.unfollow_count=0
+            stat.edit_count=0
+            stat.post_count=0
+            stat.delete_count=0
+            stat.view_count=0
+            stat.search_count=0
+    
+    db.session.commit()
+    return True
